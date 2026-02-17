@@ -1,11 +1,34 @@
-<script setup></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <component :is="currentViewComponent" />
 </template>
 
-<style scoped></style>
+<script>
+import { computed, onMounted } from 'vue'
+import { noteStore } from './store/noteStore'
+import { router } from './router'
+import ListView from './views/ListView.vue'
+import EditorView from './views/EditorView.vue'
+
+export default {
+  name: 'App',
+  components: {
+    ListView,
+    EditorView
+  },
+  setup() {
+    const routerState = router.getState()
+
+    const currentViewComponent = computed(() => {
+      return routerState.currentView === 'ListView' ? ListView : EditorView
+    })
+
+    onMounted(() => {
+      noteStore.load()
+    })
+
+    return {
+      currentViewComponent
+    }
+  }
+}
+</script>
